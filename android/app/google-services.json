@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1039855406315",
+    "project_id": "echo-talk",
+    "storage_bucket": "echo-talk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1039855406315:android:714f254891ff4e07fec2ae",
+        "android_client_info": {
+          "package_name": "com.example.echotalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1039855406315-41tr2906tvl5fl7umbsnqm0clgpsn0ss.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDpiCH4NnZ6AmJiIIwhrHh2j7kGe03yU8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1039855406315-41tr2906tvl5fl7umbsnqm0clgpsn0ss.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
