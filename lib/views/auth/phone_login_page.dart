@@ -61,7 +61,13 @@ class _PhoneLoginPageState extends State<PhoneLoginPage> {
               ),
               GestureDetector(
                 onTap: () async {
-                  AuthController.verifyPhoneNumber(phoneNumber, context);
+                  setState(() {
+                    isLoading = true;
+                  });
+                  await AuthController.verifyPhoneNumber(phoneNumber, context);
+                  setState(() {
+                    isLoading = false;
+                  });
                 },
                 child: Container(
                   decoration: BoxDecoration(

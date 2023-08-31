@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
-                      icon: Icon(Icons.alternate_email), hintText: 'Email / Phone Number'),
+                      icon: Icon(Icons.alternate_email), hintText: 'Email'),
                 ),
                 const SizedBox(
                   height: 15,
@@ -187,7 +187,7 @@ class _LoginPageState extends State<LoginPage> {
                               width: 5,
                             ),
                             Text(
-                              "Register with Phone Number",
+                              "login with Phone Number",
                               style: GoogleFonts.quicksand(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

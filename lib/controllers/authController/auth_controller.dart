@@ -148,6 +148,8 @@ class AuthController {
           context, MaterialPageRoute(builder: (context) => const HomePage()));
     } catch (e) {
       SnackBarController.showSnackBar(context, e.toString());
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const LoginPage()));
     }
   }
 }

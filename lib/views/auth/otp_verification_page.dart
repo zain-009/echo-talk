@@ -84,8 +84,14 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                 height: 30,
               ),
               GestureDetector(
-                onTap: () {
-                  AuthController.verifyOtp(widget.verificationId, smsCode, context);
+                onTap: () async {
+                  setState(() {
+                    isLoading = true;
+                  });
+                  await AuthController.verifyOtp(widget.verificationId, smsCode, context);
+                  setState(() {
+                    isLoading = false;
+                  });
                 },
                 child: Container(
                   decoration: BoxDecoration(

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../controllers/dataController/data_controller.dart';
+import '../../controllers/storageController/storage_controller.dart';
 import '../../models/userModel/user_model.dart';
 import 'edit_profile_page.dart';
 
@@ -40,11 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         backgroundColor: Colors.white12,
         elevation: 0,
-        title: Text(
-          "My Profile",
-          style: GoogleFonts.quicksand(
-              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
-        ),
+        title: Text("My Profile",style: GoogleFonts.quicksand(fontSize: 28,color: Colors.deepPurple[400],fontWeight: FontWeight.bold),),
         leading: IconButton(
             onPressed: () {
               Navigator.pop(context);
@@ -66,17 +63,19 @@ class _ProfilePageState extends State<ProfilePage> {
                   ? const Center(child: CircularProgressIndicator())
                   : Row(
                       children: [
-                        // GestureDetector(
-                        //     onTap: () {
-                        //       StorageController.pickImage(context);
-                        //     },
-                        //     child: const CircleAvatar(
-                        //       radius: 45,
-                        //       child: CircleAvatar(
-                        //         radius: 40,
-                        //         backgroundColor: Colors.black,
-                        //       ),
-                        //     )),
+                        GestureDetector(
+                            onTap: () {
+                              StorageController.pickImage(context);
+                            },
+                            child: const CircleAvatar(
+                              backgroundColor: Colors.black,
+                              radius: 45,
+                              child: CircleAvatar(
+                                radius: 40,
+                                backgroundColor: Colors.white,
+                              ),
+                            ),
+                        ),
                         const SizedBox(
                           width: 25,
                         ),
