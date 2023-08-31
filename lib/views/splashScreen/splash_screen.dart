@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
               child: SvgPicture.asset("assets/splash-icon.svg"),
             ),
             const SizedBox(height: 30,),
-            const Text("Echo Talk",style: TextStyle(fontSize: 18,color: Colors.deepPurple),),
+            const Text("Echo Talk",style: TextStyle(fontSize: 24,color: Colors.deepPurple,fontWeight: FontWeight.bold),),
           ],
         ),
       ),
