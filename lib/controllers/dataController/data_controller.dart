@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../models/userModel/user_model.dart';
 import '../snackBarController/snackBar_controller.dart';
@@ -27,23 +28,27 @@ class DataController{
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     final DocumentSnapshot docSnap =
     await firestore.collection('users').doc(uid).get();
-
     if (docSnap.exists) {
       return UserModel.fromMap(docSnap.data() as Map<String, dynamic>);
     }
   }
   //------------update-data--------------------------------------------
-  Future<void> updateUserDetails (BuildContext context,String firstName, String lastName, int age,
-      String email) async {
+  static Future<void> updateUserDetails (BuildContext context,String firstName, String lastName, int age,
+      String email, String uid) async {
     try{
+      User? user = FirebaseAuth.instance.currentUser;
       UserModel userModel = UserModel(
           firstName: firstName,
           lastName: lastName,
           age: age,
-          email: email, uid: '');
+          email: email,
+          uid: uid);
+      Map<Object, Object?> userMap = userModel.toJson().cast<Object, Object?>();
+      await FirebaseFirestore.instance.collection('users').doc(user?.uid).update(userMap);
+      SnackBarController.showSnackBar(context, "Updated!");
+      Navigator.pop(context);
     } catch (e){
       SnackBarController.showSnackBar(context, e.toString());
     }
-    //await FirebaseFirestore.instance.collection('users').doc(user.uid).update(user.toJson());
   }
 }

@@ -127,29 +127,23 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   height: 15,
                 ),
-                Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.grey[200],
-                        border: Border.all(width: 1, color: Colors.grey),
-                      ),
-                      height: size.height * 0.08,
-                      width: size.width * 0.92,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: TextField(
-                          textInputAction: TextInputAction.next,
-                          controller: _postController,
-                          decoration: const InputDecoration(
-                            hintText: 'what are you thinking about?',
-                            border: InputBorder.none,
-                          ),
-                        ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.grey[200],
+                    border: Border.all(width: 1, color: Colors.grey),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: TextField(
+                      textInputAction: TextInputAction.next,
+                      controller: _postController,
+                      decoration: const InputDecoration(
+                        hintText: 'what are you thinking about?',
+                        border: InputBorder.none,
                       ),
                     ),
-                  ],
+                  ),
                 ),
                 const SizedBox(
                   height: 10,

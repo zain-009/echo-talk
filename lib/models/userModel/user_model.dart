@@ -12,7 +12,7 @@ class UserModel {
     required this.lastName,
     required this.age,
     required this.email,
-    required this.uid,
+    this.uid,
   });
 
   UserModel.fromMap(Map<String, dynamic> map)

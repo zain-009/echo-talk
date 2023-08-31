@@ -1,3 +1,5 @@
+import 'package:echotalk/controllers/dataController/data_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../models/userModel/user_model.dart';
@@ -15,7 +17,7 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  String? uid;
+  String? uid= FirebaseAuth.instance.currentUser?.uid;
   UserModel? userModel;
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -24,6 +26,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool isObscure = true;
+  bool isObscure1 = true;
   bool isLoading = false;
   final _formKey = GlobalKey<FormState>();
 
@@ -184,7 +187,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                   TextFormField(
                     textInputAction: TextInputAction.next,
-                    obscureText: isObscure,
+                    obscureText: isObscure1,
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Please enter your password';
@@ -197,10 +200,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       suffixIcon: IconButton(
                           onPressed: () {
                             setState(() {
-                              isObscure = !isObscure;
+                              isObscure1 = !isObscure1;
                             });
                           },
-                          icon: isObscure
+                          icon: isObscure1
                               ? const Icon(Icons.visibility_off)
                               : const Icon(Icons.visibility)),
                       prefixIcon: const Icon(Icons.lock_outline),
@@ -217,7 +220,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(width:130,child: RoundButton(text: "Submit", isLoading: isLoading, onTap: (){}, color: Colors.deepPurple)),
+                      SizedBox(width:130,child: RoundButton(text: "Submit", isLoading: isLoading, onTap: (){
+                        DataController.updateUserDetails(context, _firstNameController.text.trim(), _lastNameController.text.trim(), int.parse(_ageController.text.trim()), _emailController.text.trim(), uid!);
+                      }, color: Colors.deepPurple)),
                       SizedBox(width:130,
                         child: RoundButton(text: "Cancel", onTap: (){
                           Navigator.pop(context);
