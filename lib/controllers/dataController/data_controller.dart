@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:echotalk/views/screens/home_page.dart';
+import 'package:echotalk/views/screens/profile/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../models/userModel/user_model.dart';
@@ -46,7 +48,7 @@ class DataController{
       Map<Object, Object?> userMap = userModel.toJson().cast<Object, Object?>();
       await FirebaseFirestore.instance.collection('users').doc(user?.uid).update(userMap);
       SnackBarController.showSnackBar(context, "Updated!");
-      Navigator.pop(context);
+      Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => ProfilePage()));
     } catch (e){
       SnackBarController.showSnackBar(context, e.toString());
     }

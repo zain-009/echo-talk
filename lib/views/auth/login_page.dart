@@ -224,19 +224,19 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 40,),
-                GestureDetector(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PhonePasswordResetPage()));
-                  },
-                  child: Text(
-                    "reset",
-                    style: GoogleFonts.quicksand(
-                      //fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue),
-                  ),
-                ),
+                // const SizedBox(height: 40,),
+                // GestureDetector(
+                //   onTap: (){
+                //     Navigator.push(context, MaterialPageRoute(builder: (context) => const PhonePasswordResetPage()));
+                //   },
+                //   child: Text(
+                //     "reset",
+                //     style: GoogleFonts.quicksand(
+                //       //fontSize: 16,
+                //         fontWeight: FontWeight.bold,
+                //         color: Colors.blue),
+                //   ),
+                // ),
               ],
             ),
           ),

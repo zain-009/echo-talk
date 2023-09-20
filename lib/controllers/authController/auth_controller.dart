@@ -1,3 +1,4 @@
+import 'package:echotalk/views/screens/profile/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../views/auth/otp_verification_page.dart';
@@ -150,6 +151,45 @@ class AuthController {
       SnackBarController.showSnackBar(context, e.toString());
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => const LoginPage()));
+    }
+  }
+
+  //--------change-password---------------------------------
+  static Future<void> updatePassword(
+      String password, String confirmPassword, BuildContext context) async {
+    if(password.isEmpty || confirmPassword.isEmpty){
+      SnackBarController.showSnackBar(context, "Please fill out the fields!");
+    }
+    if(password != confirmPassword){
+      SnackBarController.showSnackBar(context, "Passwords do not match!");
+    }
+    if(password == confirmPassword){
+      User? user = FirebaseAuth.instance.currentUser;
+      user?.updatePassword(password);
+    }
+  }
+
+  //--------change-email------------------------------------
+  static Future<void> updateEmail(String email, BuildContext context) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    try {
+      await user?.updateEmail(email);
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const ProfilePage()));
+    } catch (e) {
+      if (e is FirebaseAuthException) {
+        if (e.code == 'email-already-in-use') {
+          SnackBarController.showSnackBar(context, "Email Already in use!");
+        }
+        if (e.code == 'requires-recent-login') {
+          SnackBarController.showSnackBar(
+              context, "Sign in again to change email!");
+        }
+        if (e.code == 'invalid-email') {
+          SnackBarController.showSnackBar(context, "Invalid Email!");
+        }
+      }
+      SnackBarController.showSnackBar(context, e.toString());
     }
   }
 }
