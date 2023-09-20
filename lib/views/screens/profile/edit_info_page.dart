@@ -1,4 +1,5 @@
 import 'package:echotalk/controllers/dataController/data_controller.dart';
+import 'package:echotalk/controllers/snackBarController/snackBar_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -65,10 +66,11 @@ class _EditInfoScreenState extends State<EditInfoScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(
-              height: 25,
+              height: 30,
             ),
             Text(
               "Edit Profile",
@@ -77,83 +79,54 @@ class _EditInfoScreenState extends State<EditInfoScreen> {
                   fontWeight: FontWeight.bold,
                   color: Colors.deepPurple),
             ),
+            const SizedBox(
+              height: 15,
+            ),
+            Text(
+              "Please edit the details to your liking!",
+              style: GoogleFonts.quicksand(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black45),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
             TextFormField(
               textInputAction: TextInputAction.next,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter your name';
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                hintText: "First Name",
-                errorText: _formKey.currentState?.validate() == false
-                    ? 'Please enter a correct name'
-                    : null,
-              ),
               controller: _firstNameController,
+              decoration: InputDecoration(
+                labelText: "First Name",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
             ),
             const SizedBox(
-              height: 15,
+              height: 25,
             ),
             TextFormField(
               textInputAction: TextInputAction.next,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter your name';
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                hintText: "Last Name",
-                errorText: _formKey.currentState?.validate() == false
-                    ? 'Please enter a correct name'
-                    : null,
-              ),
               controller: _lastNameController,
+              decoration: InputDecoration(
+                labelText: "Last Name",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
             ),
             const SizedBox(
-              height: 15,
+              height: 25,
             ),
             TextFormField(
-              keyboardType: TextInputType.number,
               textInputAction: TextInputAction.next,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter your age';
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                hintText: "Age",
-                errorText: _formKey.currentState?.validate() == false
-                    ? 'Please enter correct age'
-                    : null,
-              ),
               controller: _ageController,
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              textInputAction: TextInputAction.next,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter your email';
-                } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                    .hasMatch(value)) {
-                  return 'Please enter a valid email';
-                }
-                return null;
-              },
               decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.alternate_email),
-                hintText: "Email",
-                errorText: _formKey.currentState?.validate() == false
-                    ? 'Please enter a valid email'
-                    : null,
+                labelText: "Age",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
-              controller: _emailController,
             ),
             const SizedBox(
               height: 30,
@@ -163,26 +136,36 @@ class _EditInfoScreenState extends State<EditInfoScreen> {
                     height: 40,
                     width: 100,
                     child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepPurple),
                         onPressed: () async {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          await DataController.updateUserDetails(
-                              context,
-                              _firstNameController.text.trim(),
-                              _lastNameController.text.trim(),
-                              int.parse(_ageController.text.trim()),
-                              _emailController.text.trim(),
-                              uid!);
-                          setState(() {
-                            isLoading = false;
-                          });
+                          if(_firstNameController.text.trim().isEmpty || _lastNameController.text.trim().isEmpty || _ageController.text.trim().isEmpty){
+                            SnackBarController.showSnackBar(context, "Please enter all details!");
+                          } else {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            await DataController.updateUserDetails(
+                                context,
+                                _firstNameController.text.trim(),
+                                _lastNameController.text.trim(),
+                                int.parse(_ageController.text.trim()),
+                                _emailController.text.trim(),
+                                uid!);
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
                         },
-                        child: isLoading ? const CircularProgressIndicator(color: Colors.white,) : Text(
-                      "Submit",
-                      style: GoogleFonts.quicksand(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                    ))))
+                        child: isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : Text(
+                                "Submit",
+                                style: GoogleFonts.quicksand(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ))))
           ],
         ),
       ),

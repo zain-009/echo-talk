@@ -157,38 +157,53 @@ class AuthController {
   //--------change-password---------------------------------
   static Future<void> updatePassword(
       String password, String confirmPassword, BuildContext context) async {
-    if(password.isEmpty || confirmPassword.isEmpty){
+    if (password.isEmpty || confirmPassword.isEmpty) {
       SnackBarController.showSnackBar(context, "Please fill out the fields!");
     }
-    if(password != confirmPassword){
+    if (password != confirmPassword) {
       SnackBarController.showSnackBar(context, "Passwords do not match!");
     }
-    if(password == confirmPassword){
-      User? user = FirebaseAuth.instance.currentUser;
-      user?.updatePassword(password);
+    if (password == confirmPassword) {
+      try {
+        User? user = FirebaseAuth.instance.currentUser;
+        user?.updatePassword(password);
+      } catch (e) {
+        SnackBarController.showSnackBar(context, e.toString());
+      }
     }
   }
 
   //--------change-email------------------------------------
-  static Future<void> updateEmail(String email, BuildContext context) async {
+  static Future<void> updateEmail(String email, String newEmail,
+      String password, BuildContext context) async {
     User? user = FirebaseAuth.instance.currentUser;
     try {
-      await user?.updateEmail(email);
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => const ProfilePage()));
-    } catch (e) {
-      if (e is FirebaseAuthException) {
-        if (e.code == 'email-already-in-use') {
-          SnackBarController.showSnackBar(context, "Email Already in use!");
+      AuthCredential credential = EmailAuthProvider.credential(
+        email: email,
+        password: password,
+      );
+      await user?.reauthenticateWithCredential(credential);
+      try {
+        await user?.updateEmail(newEmail);
+        SnackBarController.showSnackBar(context, "Email updated!");
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const ProfilePage()));
+      } catch (e) {
+        if (e is FirebaseAuthException) {
+          if (e.code == 'email-already-in-use') {
+            SnackBarController.showSnackBar(context, "Email Already in use!");
+          }
+          if (e.code == 'requires-recent-login') {
+            SnackBarController.showSnackBar(
+                context, "Sign in again to change email!");
+          }
+          if (e.code == 'invalid-email') {
+            SnackBarController.showSnackBar(context, "Invalid Email!");
+          }
         }
-        if (e.code == 'requires-recent-login') {
-          SnackBarController.showSnackBar(
-              context, "Sign in again to change email!");
-        }
-        if (e.code == 'invalid-email') {
-          SnackBarController.showSnackBar(context, "Invalid Email!");
-        }
+        SnackBarController.showSnackBar(context, e.toString());
       }
+    } catch (e) {
       SnackBarController.showSnackBar(context, e.toString());
     }
   }

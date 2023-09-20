@@ -1,3 +1,4 @@
+import 'package:echotalk/views/screens/profile/edit_email_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,6 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String? uid;
   UserModel? userModel;
   bool load = true;
+  User? user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -43,7 +45,13 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         backgroundColor: Colors.white12,
         elevation: 0,
-        title: Text("Settings",style: GoogleFonts.quicksand(fontSize: 28,color: Colors.deepPurple[400],fontWeight: FontWeight.bold),),
+        title: Text(
+          "Settings",
+          style: GoogleFonts.quicksand(
+              fontSize: 28,
+              color: Colors.deepPurple[400],
+              fontWeight: FontWeight.bold),
+        ),
         leading: IconButton(
             onPressed: () {
               Navigator.pop(context);
@@ -64,22 +72,26 @@ class _ProfilePageState extends State<ProfilePage> {
               load
                   ? const Center(child: CircularProgressIndicator())
                   : Column(
-                    children: [
-                      Row(
+                      children: [
+                        Row(
                           children: [
                             GestureDetector(
-                                onTap: () {
-                                  StorageController.pickImage(context);
-                                },
-                                child: const CircleAvatar(
-                                  backgroundColor: Colors.black,
-                                  radius: 45,
-                                  child: CircleAvatar(
-                                    radius: 40,
-                                    backgroundColor: Colors.white,
-                                    child: Icon(Icons.person,size: 65,color: Colors.deepPurple,),
+                              onTap: () {
+                                StorageController.pickImage(context);
+                              },
+                              child: const CircleAvatar(
+                                backgroundColor: Colors.black,
+                                radius: 45,
+                                child: CircleAvatar(
+                                  radius: 40,
+                                  backgroundColor: Colors.white,
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 65,
+                                    color: Colors.deepPurple,
                                   ),
                                 ),
+                              ),
                             ),
                             const SizedBox(
                               width: 25,
@@ -90,85 +102,97 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Text(
                                   "${userModel!.firstName} ${userModel!.lastName}",
                                   style: const TextStyle(
-                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  userModel!.email,
+                                  user!.email.toString(),
                                   style: const TextStyle(fontSize: 16),
                                 ),
                               ],
                             ),
                           ],
                         ),
-            const SizedBox(height: 25,),
-            Row(
-              children: [
-                const Icon(Icons.person),
-                const SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  "Account",
-                  style: GoogleFonts.quicksand(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 2,
-            ),
-            const Divider(
-              height: 1,
-              color: Colors.black,
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Tile(
-                onPress: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => EditInfoScreen(
-                              firstname: userModel!.firstName,
-                              lastName: userModel!.lastName,
-                              age: userModel!.age,
-                              email: userModel!.email)));
-                },
-                leading: "Personal Information"),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                const Icon(Icons.lock_outline),
-                const SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  "Security",
-                  style: GoogleFonts.quicksand(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 2,
-            ),
-            const Divider(
-              height: 1,
-              color: Colors.black,
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Tile(onPress: () {}, leading: "Change Password"),
-            const SizedBox(
-              height: 20,
-            ),
-                    ],
-              ),
-          ],
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.person),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "Account",
+                              style: GoogleFonts.quicksand(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 2,
+                        ),
+                        const Divider(
+                          height: 1,
+                          color: Colors.black,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Tile(
+                            onPress: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditInfoScreen(
+                                          firstname: userModel!.firstName,
+                                          lastName: userModel!.lastName,
+                                          age: userModel!.age,
+                                          email: userModel!.email)));
+                            },
+                            leading: "Personal Information"),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.lock_outline),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "Security",
+                              style: GoogleFonts.quicksand(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 2,
+                        ),
+                        const Divider(
+                          height: 1,
+                          color: Colors.black,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Tile(
+                            onPress: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          EditEmailPage(email: userModel!.email)));
+                            },
+                            leading: "Change Email"),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Tile(onPress: () {}, leading: "Change Password"),
+                      ],
+                    ),
+            ],
           ),
         ),
       ),
@@ -178,37 +202,36 @@ class _ProfilePageState extends State<ProfilePage> {
           showDialog(
               context: context,
               builder: (_) => AlertDialog(
-                title: const Text(
-                  "Logout",
-                  style: TextStyle(color: Colors.deepPurple),
-                ),
-                content:
-                const Text("Are you sure you want to Logout?"),
-                contentPadding: const EdgeInsets.all(20),
-                actions: <Widget>[
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        "No",
-                        style: TextStyle(color: Colors.black54),
-                      )),
-                  TextButton(
-                      onPressed: () {
-                        AuthController.logout(context);
-                      },
-                      child: const Text(
-                        "Yes",
-                        style: TextStyle(color: Colors.deepPurple),
-                      )),
-                ],
-              ));
+                    title: const Text(
+                      "Logout",
+                      style: TextStyle(color: Colors.deepPurple),
+                    ),
+                    content: const Text("Are you sure you want to Logout?"),
+                    contentPadding: const EdgeInsets.all(20),
+                    actions: <Widget>[
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            "No",
+                            style: TextStyle(color: Colors.black54),
+                          )),
+                      TextButton(
+                          onPressed: () {
+                            AuthController.logout(context);
+                          },
+                          child: const Text(
+                            "Yes",
+                            style: TextStyle(color: Colors.deepPurple),
+                          )),
+                    ],
+                  ));
         },
         label: Text(
           "Log out",
           style:
-          GoogleFonts.quicksand(fontSize: 16, fontWeight: FontWeight.bold),
+              GoogleFonts.quicksand(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
