@@ -1,4 +1,5 @@
 import 'package:echotalk/views/screens/profile/edit_email_page.dart';
+import 'package:echotalk/views/screens/profile/edit_password_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -96,20 +97,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             const SizedBox(
                               width: 25,
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "${userModel!.firstName} ${userModel!.lastName}",
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  user!.email.toString(),
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                              ],
+                            Text(
+                              "${userModel!.firstName} ${userModel!.lastName}",
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -182,14 +173,22 @@ class _ProfilePageState extends State<ProfilePage> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          EditEmailPage(email: userModel!.email)));
+                                      builder: (context) => EditEmailPage(
+                                          email: userModel!.email)));
                             },
                             leading: "Change Email"),
                         const SizedBox(
                           height: 10,
                         ),
-                        Tile(onPress: () {}, leading: "Change Password"),
+                        Tile(
+                            onPress: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const EditPasswordPage()));
+                            },
+                            leading: "Change Password"),
                       ],
                     ),
             ],

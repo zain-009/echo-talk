@@ -156,17 +156,23 @@ class AuthController {
 
   //--------change-password---------------------------------
   static Future<void> updatePassword(
-      String password, String confirmPassword, BuildContext context) async {
-    if (password.isEmpty || confirmPassword.isEmpty) {
-      SnackBarController.showSnackBar(context, "Please fill out the fields!");
-    }
-    if (password != confirmPassword) {
+      String password,String newPassword, String confirmPassword, BuildContext context) async {
+    if (newPassword != confirmPassword) {
       SnackBarController.showSnackBar(context, "Passwords do not match!");
     }
-    if (password == confirmPassword) {
+    if (newPassword == confirmPassword) {
+      User? user = FirebaseAuth.instance.currentUser;
       try {
-        User? user = FirebaseAuth.instance.currentUser;
-        user?.updatePassword(password);
+        AuthCredential credential = EmailAuthProvider.credential(
+          email: user!.email.toString(),
+          password: password,
+        );
+        await user?.reauthenticateWithCredential(credential);
+        try{
+          user.updatePassword(newPassword);
+        } catch (e){
+          SnackBarController.showSnackBar(context,e.toString());
+        }
       } catch (e) {
         SnackBarController.showSnackBar(context, e.toString());
       }

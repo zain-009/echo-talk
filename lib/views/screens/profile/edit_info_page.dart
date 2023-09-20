@@ -65,108 +65,110 @@ class _EditInfoScreenState extends State<EditInfoScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(
-              height: 30,
-            ),
-            Text(
-              "Edit Profile",
-              style: GoogleFonts.quicksand(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            Text(
-              "Please edit the details to your liking!",
-              style: GoogleFonts.quicksand(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black45),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            TextFormField(
-              textInputAction: TextInputAction.next,
-              controller: _firstNameController,
-              decoration: InputDecoration(
-                labelText: "First Name",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(
+                height: 30,
+              ),
+              Text(
+                "Edit Profile",
+                style: GoogleFonts.quicksand(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              Text(
+                "Please edit the details to your liking!",
+                style: GoogleFonts.quicksand(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black45),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              TextFormField(
+                textInputAction: TextInputAction.next,
+                controller: _firstNameController,
+                decoration: InputDecoration(
+                  labelText: "First Name",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 25,
-            ),
-            TextFormField(
-              textInputAction: TextInputAction.next,
-              controller: _lastNameController,
-              decoration: InputDecoration(
-                labelText: "Last Name",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
+              const SizedBox(
+                height: 25,
+              ),
+              TextFormField(
+                textInputAction: TextInputAction.next,
+                controller: _lastNameController,
+                decoration: InputDecoration(
+                  labelText: "Last Name",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 25,
-            ),
-            TextFormField(
-              textInputAction: TextInputAction.next,
-              controller: _ageController,
-              decoration: InputDecoration(
-                labelText: "Age",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
+              const SizedBox(
+                height: 25,
+              ),
+              TextFormField(
+                textInputAction: TextInputAction.next,
+                controller: _ageController,
+                decoration: InputDecoration(
+                  labelText: "Age",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Center(
-                child: SizedBox(
-                    height: 40,
-                    width: 100,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple),
-                        onPressed: () async {
-                          if(_firstNameController.text.trim().isEmpty || _lastNameController.text.trim().isEmpty || _ageController.text.trim().isEmpty){
-                            SnackBarController.showSnackBar(context, "Please enter all details!");
-                          } else {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            await DataController.updateUserDetails(
-                                context,
-                                _firstNameController.text.trim(),
-                                _lastNameController.text.trim(),
-                                int.parse(_ageController.text.trim()),
-                                _emailController.text.trim(),
-                                uid!);
-                            setState(() {
-                              isLoading = false;
-                            });
-                          }
-                        },
-                        child: isLoading
-                            ? const CircularProgressIndicator(
-                                color: Colors.white,
-                              )
-                            : Text(
-                                "Submit",
-                                style: GoogleFonts.quicksand(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
-                              ))))
-          ],
+              const SizedBox(
+                height: 30,
+              ),
+              Center(
+                  child: SizedBox(
+                      height: 40,
+                      width: 100,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepPurple),
+                          onPressed: () async {
+                            if(_firstNameController.text.trim().isEmpty || _lastNameController.text.trim().isEmpty || _ageController.text.trim().isEmpty){
+                              SnackBarController.showSnackBar(context, "Please enter all details!");
+                            } else {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              await DataController.updateUserDetails(
+                                  context,
+                                  _firstNameController.text.trim(),
+                                  _lastNameController.text.trim(),
+                                  int.parse(_ageController.text.trim()),
+                                  _emailController.text.trim(),
+                                  uid!);
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+                          },
+                          child: isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : Text(
+                                  "Submit",
+                                  style: GoogleFonts.quicksand(
+                                      fontSize: 16, fontWeight: FontWeight.bold),
+                                ))))
+            ],
+          ),
         ),
       ),
     );
