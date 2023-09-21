@@ -124,14 +124,21 @@ class _HomePageState extends State<HomePage> {
                               return Text('Error: ${snapshot.error}');
                             }
                             final posts = snapshot.data?.docs;
+                            List<PostModel> allPosts = [];
+                            if (posts != null) {
+                              for (final postDoc in posts) {
+                                final post = PostModel.fromSnapshot(postDoc);
+                                allPosts.add(post);
+                              }
+                            }
+                            allPosts = allPosts.reversed.toList();
                             return ListView.builder(
-                              itemCount: posts?.length,
+                              reverse: true,
+                              itemCount: allPosts.length,
                               itemBuilder: (context, index) {
-                                final post =
-                                    PostModel.fromSnapshot(posts![index]);
+                                final post = allPosts[index];
                                 return Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  padding: const EdgeInsets.all(10),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -155,16 +162,14 @@ class _HomePageState extends State<HomePage> {
                                             Text(
                                               post.content,
                                               style: const TextStyle(
-                                                fontSize:
-                                                    18, // Adjust font size as needed
+                                                fontSize: 18,
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
                                       Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 5),
+                                        padding: const EdgeInsets.only(top: 5),
                                         child: Text(
                                           DateFormat('hh:mm a')
                                               .format(post.timestamp),
