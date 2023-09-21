@@ -3,6 +3,7 @@ import 'package:echotalk/views/screens/home_page.dart';
 import 'package:echotalk/views/screens/profile/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../models/postModel/post_model.dart';
 import '../../models/userModel/user_model.dart';
 import '../snackBarController/snackBar_controller.dart';
 

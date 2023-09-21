@@ -8,6 +8,7 @@ import 'package:echotalk/views/screens/search_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import '../../controllers/dataController/data_controller.dart';
 import '../../models/userModel/user_model.dart';
 
@@ -21,6 +22,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? uid;
   UserModel? userModel;
+  PostModel? postModel;
   bool load = true;
   final _postController = TextEditingController();
 
@@ -40,6 +42,7 @@ class _HomePageState extends State<HomePage> {
         FirebaseAuth.instance.currentUser!.uid);
     return userModel!;
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -95,35 +98,87 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                load ? const CircularProgressIndicator(color: Colors.deepPurple,) : Container(
-                  height: size.height * 0.65,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
-                    color: Colors.deepPurple[100],
-                  ),
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance.collection('posts').snapshots(),
-                    builder: (context,snapshot){
-                      if(!snapshot.hasData){
-                        return const CircularProgressIndicator(color: Colors.white,);
-                      }
-                      if(userModel == null){
-                        return const CircularProgressIndicator(color: Colors.deepPurple,);
-                      }
-                      final posts = snapshot.data?.docs;
-                      return ListView.builder(
-                          itemCount: posts?.length,
-                          itemBuilder: (context,index){
-                            final post = PostModel.fromSnap(posts![index]);
-                            return ListTile(
-                              title: Text('post'),
-                              subtitle: Text('username'),
-                              trailing: Text('time'),
+                load
+                    ? const CircularProgressIndicator(
+                        color: Colors.deepPurple,
+                      )
+                    : Container(
+                        height: size.height * 0.65,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.deepPurple[100],
+                        ),
+                        child: StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('posts')
+                              .orderBy(
+                                'timestamp',
+                              )
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            }
+                            if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            }
+                            final posts = snapshot.data?.docs;
+                            return ListView.builder(
+                              itemCount: posts?.length,
+                              itemBuilder: (context, index) {
+                                final post =
+                                    PostModel.fromSnapshot(posts![index]);
+                                return Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8.0),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              post.name,
+                                              style: const TextStyle(
+                                                  color: Colors.black45),
+                                            ),
+                                            Text(
+                                              post.content,
+                                              style: const TextStyle(
+                                                fontSize:
+                                                    18, // Adjust font size as needed
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 5),
+                                        child: Text(
+                                          DateFormat('hh:mm a')
+                                              .format(post.timestamp),
+                                          style: const TextStyle(
+                                              color: Colors.grey),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
                             );
-                      });
-                    },
-                  ),
-                ),
+                          },
+                        )),
                 const SizedBox(
                   height: 15,
                 ),
@@ -149,22 +204,24 @@ class _HomePageState extends State<HomePage> {
                   height: 10,
                 ),
                 Container(
-                    height: size.height * 0.065,
-                    width: size.height * 0.065,
-                    decoration: BoxDecoration(
-                      color: Colors.deepPurple[400],
-                      borderRadius: BorderRadius.circular(15),
+                  height: size.height * 0.065,
+                  width: size.height * 0.065,
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple[400],
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: IconButton(
+                    onPressed: () async {
+                      await StorageController.tryAddPost(
+                          _postController.text, userModel!.firstName, context);
+                      _postController.clear();
+                    },
+                    icon: const Icon(
+                      Icons.add,
+                      color: Colors.white,
                     ),
-                    child: IconButton(
-                        onPressed: () async {
-                          await StorageController.createPost(_postController.text.trim(), context);
-                          _postController.clear();
-                          SnackBarController.showSnackBar(context, "Post Successful");
-                        },
-                        icon: const Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        ))),
+                  ),
+                ),
               ],
             ),
           ),

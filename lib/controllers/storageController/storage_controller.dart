@@ -34,19 +34,34 @@ class StorageController {
     }
   }
 
-  //-----------post--------------------------------------------------
-  static Future<void> createPost(String content, BuildContext context) async {
-    if (content.isNotEmpty) {
-      try{
-        final String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-        final Timestamp timestamp = Timestamp.now();
-        PostModel postModel = PostModel(userId: userId, content: content, timestamp: timestamp);
-        await FirebaseFirestore.instance.collection('posts').doc(userId).set(postModel.toJson());
-      } catch (e){
+  //---------------post----------------------------------------------
+  static Future<void> addPost(PostModel post, BuildContext context) async {
+    try {
+      await FirebaseFirestore.instance.collection('posts').add(post.toMap());
+      SnackBarController.showSnackBar(context, "Posted!");
+    } catch (e) {
+      SnackBarController.showSnackBar(context, e.toString());
+    }
+  }
+
+  //--------------try-post-------------------------------------------
+  static Future<void> tryAddPost(String content,String name, BuildContext context) async {
+    if (content.isEmpty) {
+      SnackBarController.showSnackBar(context, "Nothing to post!");
+    } else {
+      try {
+        String userId = FirebaseAuth.instance.currentUser!.uid;
+        DateTime timestamp = DateTime.now();
+
+        PostModel post = PostModel(
+          name: name,
+          content: content,
+          timestamp: timestamp,
+        );
+        addPost(post, context);
+      } catch (e) {
         SnackBarController.showSnackBar(context, e.toString());
       }
-    } else{
-      SnackBarController.showSnackBar(context, "No Post Content");
     }
   }
 }
