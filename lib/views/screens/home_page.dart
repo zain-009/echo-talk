@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   PostModel? postModel;
   bool load = true;
   final _postController = TextEditingController();
-
+  final _postFocusNode = FocusNode();
   @override
   void initState() {
     Future.delayed(const Duration(seconds: 2), () {
@@ -54,15 +54,13 @@ class _HomePageState extends State<HomePage> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
-          title: Padding(
-            padding: const EdgeInsets.only(left: 15),
-            child: Text(
-              "Feed",
-              style: GoogleFonts.quicksand(
-                  fontSize: 36,
-                  color: Colors.deepPurple[400],
-                  fontWeight: FontWeight.bold),
-            ),
+          titleSpacing: -30,
+          title: Text(
+            "Feed",
+            style: GoogleFonts.quicksand(
+                fontSize: 36,
+                color: Colors.deepPurple[400],
+                fontWeight: FontWeight.bold),
           ),
           backgroundColor: Colors.white12,
           elevation: 0,
@@ -103,86 +101,89 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.deepPurple,
                       )
                     : Container(
-                        height: size.height * 0.65,
+                        height: size.height * 0.78,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           color: Colors.deepPurple[100],
                         ),
-                        child: StreamBuilder<QuerySnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection('posts')
-                              .orderBy(
-                                'timestamp',
-                              )
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const CircularProgressIndicator();
-                            }
-                            if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            }
-                            final posts = snapshot.data?.docs;
-                            List<PostModel> allPosts = [];
-                            if (posts != null) {
-                              for (final postDoc in posts) {
-                                final post = PostModel.fromSnapshot(postDoc);
-                                allPosts.add(post);
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('posts')
+                                .orderBy(
+                                  'timestamp',
+                                )
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
                               }
-                            }
-                            allPosts = allPosts.reversed.toList();
-                            return ListView.builder(
-                              reverse: true,
-                              itemCount: allPosts.length,
-                              itemBuilder: (context, index) {
-                                final post = allPosts[index];
-                                return Container(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              post.name,
-                                              style: const TextStyle(
-                                                  color: Colors.black45),
-                                            ),
-                                            Text(
-                                              post.content,
-                                              style: const TextStyle(
-                                                fontSize: 18,
+                              if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              }
+                              final posts = snapshot.data?.docs;
+                              List<PostModel> allPosts = [];
+                              if (posts != null) {
+                                for (final postDoc in posts) {
+                                  final post = PostModel.fromSnapshot(postDoc);
+                                  allPosts.add(post);
+                                }
+                              }
+                              allPosts = allPosts.reversed.toList();
+                              return ListView.builder(
+                                reverse: true,
+                                itemCount: allPosts.length,
+                                itemBuilder: (context, index) {
+                                  final post = allPosts[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(8.0),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                post.name,
+                                                style: const TextStyle(
+                                                    color: Colors.black45),
                                               ),
-                                            ),
-                                          ],
+                                              Text(
+                                                post.content,
+                                                style: const TextStyle(
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 5),
-                                        child: Text(
-                                          DateFormat('hh:mm a')
-                                              .format(post.timestamp),
-                                          style: const TextStyle(
-                                              color: Colors.grey),
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 5),
+                                          child: Text(
+                                            DateFormat('hh:mm a')
+                                                .format(post.timestamp),
+                                            style: const TextStyle(
+                                                color: Colors.grey),
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          },
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
                         )),
                 const SizedBox(
                   height: 15,
@@ -195,35 +196,25 @@ class _HomePageState extends State<HomePage> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
-                    child: TextField(
-                      textInputAction: TextInputAction.next,
-                      controller: _postController,
-                      decoration: const InputDecoration(
-                        hintText: 'what are you thinking about?',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  height: size.height * 0.065,
-                  width: size.height * 0.065,
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple[400],
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: IconButton(
-                    onPressed: () async {
-                      await StorageController.tryAddPost(
-                          _postController.text, userModel!.firstName, context);
-                      _postController.clear();
-                    },
-                    icon: const Icon(
-                      Icons.add,
-                      color: Colors.white,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            focusNode: _postFocusNode,
+                            textInputAction: TextInputAction.next,
+                            controller: _postController,
+                            decoration: const InputDecoration(
+                              hintText: 'what are you thinking about?',
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                        IconButton(onPressed: () async {
+                          await StorageController.tryAddPost(
+                              _postController.text, userModel!.firstName, context);
+                          _postController.clear();
+                        }, icon: const Icon(Icons.send,color: Colors.deepPurple,))
+                      ],
                     ),
                   ),
                 ),
