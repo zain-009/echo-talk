@@ -10,8 +10,8 @@ import '../snackBarController/snackBar_controller.dart';
 
 class AuthController {
   //---------Sign-in-----------------------------
-  static Future<void> signIn(
-      String email, String password, BuildContext context) async {
+  static Future<void> signIn(String email, String password,
+      BuildContext context) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     try {
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
@@ -23,10 +23,11 @@ class AuthController {
             context, MaterialPageRoute(builder: (context) => const HomePage()));
       } else {
         AuthController.sendVerificationMail()
-            .then((value) => SnackBarController.showSnackBar(
+            .then((value) =>
+            SnackBarController.showSnackBar(
                 context, "Account not verified. Check email for verification"))
             .onError((error, stackTrace) =>
-                SnackBarController.showSnackBar(context, error.toString()));
+            SnackBarController.showSnackBar(context, error.toString()));
       }
     } catch (e) {
       if (e is FirebaseAuthException) {
@@ -43,93 +44,84 @@ class AuthController {
       }
     }
   }
+
   //---------Sign-out-----------------------------
-  static void closeAccount(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text(
-            "Logout",
-            style: TextStyle(color: Colors.deepPurple),
-          ),
-          content: const Text("Are you sure you want to close this account?"),
-          contentPadding: const EdgeInsets.all(20),
-          actions: <Widget>[
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  "No",
-                  style: TextStyle(color: Colors.black54),
-                )),
-            TextButton(
-                onPressed: () async {
-                  try{
-                    User? user = FirebaseAuth.instance.currentUser;
-                    if(user != null){
-                      CollectionReference usersCollection =
-                      FirebaseFirestore.instance.collection('users');
-                      await usersCollection.doc(user.uid).delete();
-                      await user.delete();
-                      Navigator.pushReplacement(
-                          context, MaterialPageRoute(builder: (context) => const LoginPage()));
-                    }
-                  }catch(e){
-                    SnackBarController.showSnackBar(context, e.toString());
-                  }
-                },
-                child: const Text(
-                  "Yes",
-                  style: TextStyle(color: Colors.deepPurple),
-                )),
-          ],
-        ));
+  static Future<void> closeAccount(BuildContext context, String email,
+      String password) async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      AuthCredential credential = EmailAuthProvider.credential(
+        email: email,
+        password: password,
+      );
+
+      try {
+        await user.reauthenticateWithCredential(credential);
+        CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+        await user.delete().then((value) async =>
+        await usersCollection.doc(user.uid).delete()).then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage())));
+      } catch (e) {
+        if (e is FirebaseAuthException) {
+          if (e.code == 'wrong-password') {
+            SnackBarController.showSnackBar(context, "Wrong Password");
+          } else {
+            SnackBarController.showSnackBar(context, e.toString());
+          }
+        } else {
+          SnackBarController.showSnackBar(context, e.toString());
+        }
+      }
+    } else {
+      SnackBarController.showSnackBar(context, "User is not signed in.");
+    }
   }
+
 
   //---------Sign-out-----------------------------
   static void logout(BuildContext context) {
     showDialog(
         context: context,
-        builder: (_) => AlertDialog(
-          title: const Text(
-            "Logout",
-            style: TextStyle(color: Colors.deepPurple),
-          ),
-          content: const Text("Are you sure you want to Logout?"),
-          contentPadding: const EdgeInsets.all(20),
-          actions: <Widget>[
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  "No",
-                  style: TextStyle(color: Colors.black54),
-                )),
-            TextButton(
-                onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
-                  Navigator.pushReplacement(
-                      context, MaterialPageRoute(builder: (context) => const LoginPage()));
-                },
-                child: const Text(
-                  "Yes",
-                  style: TextStyle(color: Colors.deepPurple),
-                )),
-          ],
-        ));
+        builder: (_) =>
+            AlertDialog(
+              title: const Text(
+                "Logout",
+                style: TextStyle(color: Colors.deepPurple),
+              ),
+              content: const Text("Are you sure you want to Logout?"),
+              contentPadding: const EdgeInsets.all(20),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      "No",
+                      style: TextStyle(color: Colors.black54),
+                    )),
+                TextButton(
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacement(
+                          context, MaterialPageRoute(
+                          builder: (context) => const LoginPage()));
+                    },
+                    child: const Text(
+                      "Yes",
+                      style: TextStyle(color: Colors.deepPurple),
+                    )),
+              ],
+            ));
   }
 
   //---------Sign-up-----------------------------
-  static Future<void> signup(
-    String email,
-    String password,
-    BuildContext context,
-    String firstName,
-    String lastName,
-    int age,
-  ) async {
+  static Future<void> signup(String email,
+      String password,
+      BuildContext context,
+      String firstName,
+      String lastName,
+      int age,) async {
     try {
       FirebaseAuth auth = FirebaseAuth.instance;
       await auth.createUserWithEmailAndPassword(
@@ -163,12 +155,13 @@ class AuthController {
   static Future<void> resetPassword(String email, BuildContext context) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     try {
-      auth.sendPasswordResetEmail(email: email).then((_) => {
-            SnackBarController.showSnackBar(
-                context, "Password Reset Email Sent!"),
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const LoginPage()))
-          });
+      auth.sendPasswordResetEmail(email: email).then((_) =>
+      {
+        SnackBarController.showSnackBar(
+            context, "Password Reset Email Sent!"),
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const LoginPage()))
+      });
     } catch (e) {
       if (e is FirebaseAuthException) {
         if (e.code == 'user-not-found') {
@@ -183,8 +176,8 @@ class AuthController {
   }
 
   //---------phone-verification-----------------------------
-  static Future<void> verifyPhoneNumber(
-      String phoneNumber, BuildContext context) async {
+  static Future<void> verifyPhoneNumber(String phoneNumber,
+      BuildContext context) async {
     try {
       await FirebaseAuth.instance.verifyPhoneNumber(
           phoneNumber: phoneNumber,
@@ -196,7 +189,8 @@ class AuthController {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => OtpVerificationPage(
+                    builder: (context) =>
+                        OtpVerificationPage(
                           verificationId: verificationId,
                           phoneNumber: phoneNumber,
                         )));
@@ -204,13 +198,12 @@ class AuthController {
           codeAutoRetrievalTimeout: (e) {
             SnackBarController.showSnackBar(context, e.toString());
           });
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   //---------otp-verification-----------------------------
-  static Future<void> verifyOtp(
-      String verificationId, String smsCode, BuildContext context) async {
+  static Future<void> verifyOtp(String verificationId, String smsCode,
+      BuildContext context) async {
     final credential = PhoneAuthProvider.credential(
         verificationId: verificationId, smsCode: smsCode);
     try {
@@ -218,25 +211,27 @@ class AuthController {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => const HomePage()));
     } catch (e) {
-      if(e is FirebaseAuthException){
-        if(e.code == 'ERROR_INVALID_VERIFICATION_CODE'){
+      if (e is FirebaseAuthException) {
+        if (e.code == 'ERROR_INVALID_VERIFICATION_CODE') {
           SnackBarController.showSnackBar(context, "Wrong verification code!");
-        } else{
+        } else {
           SnackBarController.showSnackBar(context, e.toString());
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => const LoginPage()));
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()));
         }
-      } else{
+      } else {
         SnackBarController.showSnackBar(context, e.toString());
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const LoginPage()));
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()));
       }
     }
   }
 
   //--------change-password---------------------------------
-  static Future<void> updatePassword(
-      String password,String newPassword, String confirmPassword, BuildContext context) async {
+  static Future<void> updatePassword(String password, String newPassword,
+      String confirmPassword, BuildContext context) async {
     if (newPassword != confirmPassword) {
       SnackBarController.showSnackBar(context, "Passwords do not match!");
     }
@@ -248,10 +243,10 @@ class AuthController {
           password: password,
         );
         await user?.reauthenticateWithCredential(credential);
-        try{
+        try {
           user.updatePassword(newPassword);
-        } catch (e){
-          SnackBarController.showSnackBar(context,e.toString());
+        } catch (e) {
+          SnackBarController.showSnackBar(context, e.toString());
         }
       } catch (e) {
         SnackBarController.showSnackBar(context, e.toString());

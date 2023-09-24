@@ -25,15 +25,12 @@ class _SignUpPageState extends State<SignUpPage> {
   bool isObscure1 = true;
   final _formKey = GlobalKey<FormState>();
 
-  @override
-  void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _ageController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+  String? firstNameError;
+  String? lastNameError;
+  String? ageError;
+  String? emailError;
+  String? passwordError;
+  String? confirmPasswordError;
 
   @override
   Widget build(BuildContext context) {
@@ -80,9 +77,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     },
                     decoration: InputDecoration(
                       hintText: "First Name",
-                      errorText: _formKey.currentState?.validate() == false
-                          ? 'Please enter a correct name'
-                          : null,
+                      errorText: firstNameError,
                     ),
                     controller: _firstNameController,
                   ),
@@ -99,9 +94,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     },
                     decoration: InputDecoration(
                       hintText: "Last Name",
-                      errorText: _formKey.currentState?.validate() == false
-                          ? 'Please enter a correct name'
-                          : null,
+                      errorText: lastNameError,
                     ),
                     controller: _lastNameController,
                   ),
@@ -119,9 +112,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     },
                     decoration: InputDecoration(
                       hintText: "Age",
-                      errorText: _formKey.currentState?.validate() == false
-                          ? 'Please enter correct age'
-                          : null,
+                      errorText: ageError,
                     ),
                     controller: _ageController,
                   ),
@@ -142,9 +133,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.alternate_email),
                       hintText: "Email",
-                      errorText: _formKey.currentState?.validate() == false
-                          ? 'Please enter a valid email'
-                          : null,
+                      errorText: emailError,
                     ),
                     controller: _emailController,
                   ),
@@ -172,9 +161,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               : const Icon(Icons.visibility)),
                       prefixIcon: const Icon(Icons.lock_outline),
                       hintText: "Password",
-                      errorText: _formKey.currentState?.validate() == false
-                          ? 'Please enter a valid password'
-                          : null,
+                      errorText: passwordError,
                     ),
                     controller: _passwordController,
                   ),
@@ -202,9 +189,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               : const Icon(Icons.visibility)),
                       prefixIcon: const Icon(Icons.lock_outline),
                       hintText: "Confirm Password",
-                      errorText: _formKey.currentState?.validate() == false
-                          ? 'Please enter a valid password'
-                          : null,
+                      errorText: confirmPasswordError,
                     ),
                     controller: _confirmPasswordController,
                   ),
@@ -216,24 +201,40 @@ class _SignUpPageState extends State<SignUpPage> {
                     isLoading: isLoading,
                     color: Colors.deepPurple,
                     onTap: () async {
+                      setState(() {
+                        firstNameError = null;
+                        lastNameError = null;
+                        ageError = null;
+                        emailError = null;
+                        passwordError = null;
+                        confirmPasswordError = null;
+                        isLoading = true;
+                      });
+
                       if (_formKey.currentState!.validate()) {
-                        if(_passwordController.text.trim() != _confirmPasswordController.text.trim()){
-                          SnackBarController.showSnackBar(context, "Passwords do not match!");
-                        } else {
+                        if (_passwordController.text.trim() !=
+                            _confirmPasswordController.text.trim()) {
                           setState(() {
-                            isLoading = true;
+                            confirmPasswordError = "Passwords do not match!";
+                            isLoading = false;
                           });
+                        } else {
                           await AuthController.signup(
-                              _emailController.text.trim(),
-                              _passwordController.text.trim(),
-                              context,
-                              _firstNameController.text.trim(),
-                              _lastNameController.text.trim(),
-                              int.parse(_ageController.text.trim()));
+                            _emailController.text.trim(),
+                            _passwordController.text.trim(),
+                            context,
+                            _firstNameController.text.trim(),
+                            _lastNameController.text.trim(),
+                            int.parse(_ageController.text.trim()),
+                          );
                           setState(() {
                             isLoading = false;
                           });
                         }
+                      } else {
+                        setState(() {
+                          isLoading = false;
+                        });
                       }
                     },
                   ),

@@ -1,11 +1,9 @@
 import 'package:echotalk/controllers/authController/auth_controller.dart';
-import 'package:echotalk/controllers/snackBarController/snackBar_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CloseAccountPage extends StatefulWidget {
   final String email;
-
   const CloseAccountPage({super.key, required this.email});
 
   @override
@@ -14,7 +12,6 @@ class CloseAccountPage extends StatefulWidget {
 
 class _CloseAccountPageState extends State<CloseAccountPage> {
   final _emailController = TextEditingController();
-  final _newEmailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool isLoading = false;
   bool isObscure = true;
@@ -28,13 +25,13 @@ class _CloseAccountPageState extends State<CloseAccountPage> {
   @override
   void dispose() {
     _emailController.dispose();
-    _newEmailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white12,
@@ -74,7 +71,7 @@ class _CloseAccountPageState extends State<CloseAccountPage> {
                     color: Colors.black45),
               ),
               const SizedBox(
-                height: 25,
+                height: 40,
               ),
               TextFormField(
                 controller: _emailController,
@@ -87,7 +84,7 @@ class _CloseAccountPageState extends State<CloseAccountPage> {
                 ),
               ),
               const SizedBox(
-                height: 15,
+                height: 30,
               ),
               TextFormField(
                 textInputAction: TextInputAction.next,
@@ -111,7 +108,15 @@ class _CloseAccountPageState extends State<CloseAccountPage> {
                 controller: _passwordController,
               ),
               const SizedBox(
-                height: 30,
+                height: 15,
+              ),
+              Text(
+                "By clicking on close, your account and all information will be deleted permanently!",
+                style: GoogleFonts.quicksand(
+                    fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                height: size.height * 0.33,
               ),
               Center(
                   child: SizedBox(
@@ -119,37 +124,53 @@ class _CloseAccountPageState extends State<CloseAccountPage> {
                       width: 100,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepPurple),
+                              backgroundColor: Colors.red),
                           onPressed: () async {
-                            if (_passwordController.text.trim().length < 6) {
-                              SnackBarController.showSnackBar(context,
-                                  "Password must me at least 6 digits!");
-                            }
-                            if (_passwordController.text.trim().isNotEmpty &&
-                                _passwordController.text.trim().length >= 6) {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              await AuthController.updateEmail(
-                                  _emailController.text.trim(),
-                                  _newEmailController.text.trim(),
-                                  _passwordController.text.trim(),
-                                  context);
-                              setState(() {
-                                isLoading = false;
-                              });
-                            }
+                            showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: const Text(
+                                    "Logout",
+                                    style: TextStyle(color: Colors.deepPurple),
+                                  ),
+                                  content: const Text("Are you sure you want to close this account?"),
+                                  contentPadding: const EdgeInsets.all(20),
+                                  actions: <Widget>[
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text(
+                                          "No",
+                                          style: TextStyle(color: Colors.black54),
+                                        )),
+                                    TextButton(
+                                        onPressed: () async {
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          await AuthController.closeAccount(context, _emailController.text.trim(), _passwordController.text.trim());
+                                          setState(() {
+                                            isLoading = false;
+                                          });
+                                          },
+                                        child: const Text(
+                                          "Yes",
+                                          style: TextStyle(color: Colors.deepPurple),
+                                        )),
+                                  ],
+                                ));
                           },
                           child: isLoading
                               ? const CircularProgressIndicator(
-                            color: Colors.white,
-                          )
+                                  color: Colors.white,
+                                )
                               : Text(
-                            "Submit",
-                            style: GoogleFonts.quicksand(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ))))
+                                  "Close",
+                                  style: GoogleFonts.quicksand(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ))))
             ],
           ),
         ),
