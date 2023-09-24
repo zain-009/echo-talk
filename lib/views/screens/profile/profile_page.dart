@@ -1,3 +1,4 @@
+import 'package:echotalk/views/screens/profile/close_account_screen.dart';
 import 'package:echotalk/views/screens/profile/edit_email_page.dart';
 import 'package:echotalk/views/screens/profile/edit_password_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,18 +26,20 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        load = false;
-      });
-    });
     getData();
     super.initState();
   }
 
   Future<UserModel> getData() async {
+    setState(() {
+      load = true;
+    });
     userModel = await DataController.getUserModelById(
         FirebaseAuth.instance.currentUser!.uid);
+
+    setState(() {
+      load = false;
+    });
     return userModel!;
   }
 
@@ -121,14 +124,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         ),
                         const SizedBox(
-                          height: 2,
+                          height: 5,
                         ),
                         const Divider(
                           height: 1,
                           color: Colors.black,
                         ),
                         const SizedBox(
-                          height: 5,
+                          height: 10,
                         ),
                         Tile(
                             onPress: () {
@@ -159,14 +162,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         ),
                         const SizedBox(
-                          height: 2,
+                          height: 5,
                         ),
                         const Divider(
                           height: 1,
                           color: Colors.black,
                         ),
                         const SizedBox(
-                          height: 5,
+                          height: 10,
                         ),
                         Tile(
                             onPress: () {
@@ -189,6 +192,18 @@ class _ProfilePageState extends State<ProfilePage> {
                                           const EditPasswordPage()));
                             },
                             leading: "Change Password"),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Tile(
+                            onPress: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CloseAccountPage(
+                                          email: userModel!.email)));
+                            },
+                            leading: "Close Account"),
                       ],
                     ),
             ],
@@ -198,34 +213,7 @@ class _ProfilePageState extends State<ProfilePage> {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.deepPurple,
         onPressed: () {
-          showDialog(
-              context: context,
-              builder: (_) => AlertDialog(
-                    title: const Text(
-                      "Logout",
-                      style: TextStyle(color: Colors.deepPurple),
-                    ),
-                    content: const Text("Are you sure you want to Logout?"),
-                    contentPadding: const EdgeInsets.all(20),
-                    actions: <Widget>[
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text(
-                            "No",
-                            style: TextStyle(color: Colors.black54),
-                          )),
-                      TextButton(
-                          onPressed: () {
-                            AuthController.logout(context);
-                          },
-                          child: const Text(
-                            "Yes",
-                            style: TextStyle(color: Colors.deepPurple),
-                          )),
-                    ],
-                  ));
+          AuthController.logout(context);
         },
         label: Text(
           "Log out",

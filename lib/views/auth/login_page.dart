@@ -1,6 +1,5 @@
 import 'package:echotalk/controllers/authController/auth_controller.dart';
 import 'package:echotalk/views/auth/phone_login_page.dart';
-import 'package:echotalk/views/auth/phone_password_reset_page.dart';
 import 'package:echotalk/views/auth/signup_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -187,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                               width: 5,
                             ),
                             Text(
-                              "login with Phone Number",
+                              "login as Guest",
                               style: GoogleFonts.quicksand(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -224,19 +223,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                // const SizedBox(height: 40,),
-                // GestureDetector(
-                //   onTap: (){
-                //     Navigator.push(context, MaterialPageRoute(builder: (context) => const PhonePasswordResetPage()));
-                //   },
-                //   child: Text(
-                //     "reset",
-                //     style: GoogleFonts.quicksand(
-                //       //fontSize: 16,
-                //         fontWeight: FontWeight.bold,
-                //         color: Colors.blue),
-                //   ),
-                // ),
               ],
             ),
           ),

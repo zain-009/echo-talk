@@ -3,16 +3,16 @@ import 'package:echotalk/controllers/snackBarController/snackBar_controller.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class EditEmailPage extends StatefulWidget {
+class CloseAccountPage extends StatefulWidget {
   final String email;
 
-  const EditEmailPage({super.key, required this.email});
+  const CloseAccountPage({super.key, required this.email});
 
   @override
-  State<EditEmailPage> createState() => _EditEmailPageState();
+  State<CloseAccountPage> createState() => _CloseAccountPageState();
 }
 
-class _EditEmailPageState extends State<EditEmailPage> {
+class _CloseAccountPageState extends State<CloseAccountPage> {
   final _emailController = TextEditingController();
   final _newEmailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -57,7 +57,7 @@ class _EditEmailPageState extends State<EditEmailPage> {
                 height: 25,
               ),
               Text(
-                "Change Email",
+                "Close Account",
                 style: GoogleFonts.quicksand(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
@@ -67,7 +67,7 @@ class _EditEmailPageState extends State<EditEmailPage> {
                 height: 30,
               ),
               Text(
-                "Please enter the new email below!",
+                "We are sorry to see you go!",
                 style: GoogleFonts.quicksand(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -85,20 +85,6 @@ class _EditEmailPageState extends State<EditEmailPage> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              TextFormField(
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  prefixIcon: const Icon(Icons.alternate_email),
-                  hintText: "New Email",
-                ),
-                controller: _newEmailController,
               ),
               const SizedBox(
                 height: 15,
@@ -135,15 +121,11 @@ class _EditEmailPageState extends State<EditEmailPage> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.deepPurple),
                           onPressed: () async {
-                            if (_newEmailController.text.trim().isEmpty) {
-                              SnackBarController.showSnackBar(
-                                  context, "Please enter an email!");
-                            }
                             if (_passwordController.text.trim().length < 6) {
                               SnackBarController.showSnackBar(context,
                                   "Password must me at least 6 digits!");
                             }
-                            if (_emailController.text.trim().isNotEmpty &&
+                            if (_passwordController.text.trim().isNotEmpty &&
                                 _passwordController.text.trim().length >= 6) {
                               setState(() {
                                 isLoading = true;
@@ -160,14 +142,14 @@ class _EditEmailPageState extends State<EditEmailPage> {
                           },
                           child: isLoading
                               ? const CircularProgressIndicator(
-                                  color: Colors.white,
-                                )
+                            color: Colors.white,
+                          )
                               : Text(
-                                  "Submit",
-                                  style: GoogleFonts.quicksand(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ))))
+                            "Submit",
+                            style: GoogleFonts.quicksand(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ))))
             ],
           ),
         ),

@@ -65,8 +65,10 @@ class _PhoneLoginPageState extends State<PhoneLoginPage> {
                     isLoading = true;
                   });
                   await AuthController.verifyPhoneNumber(phoneNumber, context);
+                  Future.delayed(const Duration(seconds: 10),(){
                   setState(() {
-                    isLoading = false;
+                  isLoading = false;
+                  });
                   });
                 },
                 child: Container(

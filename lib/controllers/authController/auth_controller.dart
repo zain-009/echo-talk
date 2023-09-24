@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:echotalk/views/screens/profile/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -42,12 +43,82 @@ class AuthController {
       }
     }
   }
+  //---------Sign-out-----------------------------
+  static void closeAccount(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text(
+            "Logout",
+            style: TextStyle(color: Colors.deepPurple),
+          ),
+          content: const Text("Are you sure you want to close this account?"),
+          contentPadding: const EdgeInsets.all(20),
+          actions: <Widget>[
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  "No",
+                  style: TextStyle(color: Colors.black54),
+                )),
+            TextButton(
+                onPressed: () async {
+                  try{
+                    User? user = FirebaseAuth.instance.currentUser;
+                    if(user != null){
+                      CollectionReference usersCollection =
+                      FirebaseFirestore.instance.collection('users');
+                      await usersCollection.doc(user.uid).delete();
+                      await user.delete();
+                      Navigator.pushReplacement(
+                          context, MaterialPageRoute(builder: (context) => const LoginPage()));
+                    }
+                  }catch(e){
+                    SnackBarController.showSnackBar(context, e.toString());
+                  }
+                },
+                child: const Text(
+                  "Yes",
+                  style: TextStyle(color: Colors.deepPurple),
+                )),
+          ],
+        ));
+  }
 
   //---------Sign-out-----------------------------
-  static Future<void> logout(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const LoginPage()));
+  static void logout(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text(
+            "Logout",
+            style: TextStyle(color: Colors.deepPurple),
+          ),
+          content: const Text("Are you sure you want to Logout?"),
+          contentPadding: const EdgeInsets.all(20),
+          actions: <Widget>[
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  "No",
+                  style: TextStyle(color: Colors.black54),
+                )),
+            TextButton(
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.pushReplacement(
+                      context, MaterialPageRoute(builder: (context) => const LoginPage()));
+                },
+                child: const Text(
+                  "Yes",
+                  style: TextStyle(color: Colors.deepPurple),
+                )),
+          ],
+        ));
   }
 
   //---------Sign-up-----------------------------
@@ -134,7 +205,6 @@ class AuthController {
             SnackBarController.showSnackBar(context, e.toString());
           });
     } catch (e) {
-      SnackBarController.showSnackBar(context, e.toString());
     }
   }
 
@@ -148,9 +218,19 @@ class AuthController {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => const HomePage()));
     } catch (e) {
-      SnackBarController.showSnackBar(context, e.toString());
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const LoginPage()));
+      if(e is FirebaseAuthException){
+        if(e.code == 'ERROR_INVALID_VERIFICATION_CODE'){
+          SnackBarController.showSnackBar(context, "Wrong verification code!");
+        } else{
+          SnackBarController.showSnackBar(context, e.toString());
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => const LoginPage()));
+        }
+      } else{
+        SnackBarController.showSnackBar(context, e.toString());
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const LoginPage()));
+      }
     }
   }
 
