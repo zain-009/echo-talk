@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
   void _startListeningToPosts() {
     FirebaseFirestore.instance
         .collection('posts')
-        .orderBy('timestamp')
+        .orderBy('timestamp',descending: true)
         .snapshots()
         .listen((snapshot) {
       final posts = snapshot.docs.map((postDoc) => PostModel.fromSnapshot(postDoc)).toList();

@@ -81,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                StorageController.pickImage(context);
+                                //StorageController.pickImage(context);
                               },
                               child: const CircleAvatar(
                                 backgroundColor: Colors.black,
