@@ -244,7 +244,9 @@ class AuthController {
         );
         await user?.reauthenticateWithCredential(credential);
         try {
-          user.updatePassword(newPassword);
+          await user.updatePassword(newPassword);
+          SnackBarController.showSnackBar(context, "Password updated!");
+          Navigator.pop(context);
         } catch (e) {
           SnackBarController.showSnackBar(context, e.toString());
         }
